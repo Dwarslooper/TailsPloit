@@ -1,0 +1,17 @@
+name: NoConsoleHijack #BugFix
+version: '${project.version}'
+main: com.eimacon.bugfix.Bugfix
+api-version: 1.18
+#softdepend: [ProtocolLib]
+commands:
+  bugfix:
+  chunkinfo:
+  zimmerpflanze:
+  setlobby:
+  lobby:
+    aliases:
+      - l
+      - hub
+      - spawn
+    teleporter:
+    editgui:
