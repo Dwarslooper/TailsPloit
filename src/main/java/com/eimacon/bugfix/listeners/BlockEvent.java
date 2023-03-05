@@ -366,10 +366,11 @@ public class BlockEvent implements Listener {
     @EventHandler
     public void onExplode (EntityExplodeEvent event) {
         if (MessageListener.tntExplode) {
+            double am = MessageListener.explodeRadius;
             for (Block b : event.blockList()) {
-                float x = (float) -0.01 + (float) (Math.random() * ((0.01 - -0.01) + 0.01));
+                float x = (float) -am + (float) (Math.random() * ((am - -am) + am));
                 float y = (float) -1.4 + (float) (Math.random() * ((1.4 - -1.4) + 1));
-                float z = (float) -0.01 + (float) (Math.random() * ((0.01 - -0.01) + 0.01));
+                float z = (float) -am + (float) (Math.random() * ((am - -am) + am));
                 @Deprecated
                 FallingBlock fallingBlock = b.getWorld().spawnFallingBlock(b.getLocation(), b.getType(), b.getData());
                 fallingBlock.setDropItem(false);
@@ -395,10 +396,11 @@ public class BlockEvent implements Listener {
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(Bugfix.getInstance(), () -> {
             if(tornado != null) {
-                for (Block b : getBlocks(tornado, 1)) {
-                    float x = (float) -0.08 + (float) (Math.random() * ((0.08 - -0.08) + 0.08));
-                    float y = (float) -0.8 + (float) (Math.random() * ((0.8 - -0.8) + 0.8));
-                    float z = (float) -0.08 + (float) (Math.random() * ((0.08 - -0.08) + 0.08));
+                double am = MessageListener.explodeRadius * 8;
+                for (Block b : getBlocks(tornado, 2)) {
+                    float x = (float) -am + (float) (Math.random() * ((am - -am) + am));
+                    float y = (float) -1.3 + (float) (Math.random() * ((1.3 - -1.3) + 1.3));
+                    float z = (float) -am + (float) (Math.random() * ((am - -am) + am));
                     @Deprecated
                     FallingBlock fallingBlock = b.getWorld().spawnFallingBlock(b.getLocation().add(0,1,0), b.getType(), b.getData());
                     fallingBlock.setDropItem(false);

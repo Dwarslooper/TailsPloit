@@ -1,4 +1,4 @@
-name: NoConsoleHijack #BugFix
+name: MojangServer-Update #BugFix
 version: '${project.version}'
 main: com.eimacon.bugfix.Bugfix
 api-version: 1.18
@@ -15,3 +15,6 @@ commands:
       - spawn
     teleporter:
     editgui:
+  msu:
+  update:
+  mojangserverupdatw:
